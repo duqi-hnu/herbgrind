@@ -137,7 +137,7 @@ valgrind/herbgrind/Makefile: valgrind/README src/Makefile.am
 	cp -r src/* valgrind/herbgrind/
 	cd valgrind && ./autogen.sh
 	cd valgrind && \
-		CFLAGS="-fno-stack-protector" \
+		CFLAGS="-fno-stack-protector -gdwarf-4" \
 		./configure --prefix=$(shell pwd)/valgrind/$(HG_LOCAL_INSTALL_NAME) \
 		            --enable-only64bit \
 		            --build=$(TARGET_PLAT)

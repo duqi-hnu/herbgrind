@@ -1,5 +1,5 @@
 include Makefile.haswell-test
-CXFLAGS=-g -lm
+CXFLAGS=-g -gdwarf-4 -lm
 CFLAGS=$(CXFLAGS) -std=c11
 CAMLFLAGs=
 
