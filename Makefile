@@ -10,11 +10,41 @@ MPC_VERSION=1.1.0
 # The repo to clone valgrind from.
 VALGRIND_REPO_LOCATION=git://sourceware.org/git/valgrind.git
 VALGRIND_REVISION=3217459c723df997a0c86c97b55ba539240fa111
-# The architecture thhat we're buiding herbgrind for, in the syntax of
+# The architecture that we're building herbgrind for, in the syntax of
 # valgrind filename conventions for this sort of thing.
-TARGET_PLAT:=$(shell test `uname` = "Darwin" && echo "amd64-darwin" || echo "amd64-linux")
-ARCH_PRI=amd64
-ARCH_SEC=
+UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+
+ifeq ($(UNAME_M),x86_64)
+DEFAULT_ARCH_PRI := amd64
+DEFAULT_AUTOCONF_BUILD_64 := x86_64
+else ifeq ($(UNAME_M),amd64)
+DEFAULT_ARCH_PRI := amd64
+DEFAULT_AUTOCONF_BUILD_64 := x86_64
+else ifeq ($(UNAME_M),aarch64)
+DEFAULT_ARCH_PRI := arm64
+DEFAULT_AUTOCONF_BUILD_64 := aarch64
+else ifeq ($(UNAME_M),arm64)
+DEFAULT_ARCH_PRI := arm64
+DEFAULT_AUTOCONF_BUILD_64 := aarch64
+else
+DEFAULT_ARCH_PRI := amd64
+DEFAULT_AUTOCONF_BUILD_64 := $(UNAME_M)
+endif
+
+OS_FLAVOR := $(if $(filter Darwin,$(UNAME_S)),darwin,linux)
+
+ARCH_PRI ?= $(DEFAULT_ARCH_PRI)
+ARCH_SEC ?=
+TARGET_PLAT ?= $(ARCH_PRI)-$(OS_FLAVOR)
+
+ifeq ($(ARCH_PRI),amd64)
+AUTOCONF_BUILD_64 ?= x86_64
+else ifeq ($(ARCH_PRI),arm64)
+AUTOCONF_BUILD_64 ?= aarch64
+else
+AUTOCONF_BUILD_64 ?= $(DEFAULT_AUTOCONF_BUILD_64)
+endif
 
 ifdef ARCH_SEC
 DEPS = \
@@ -212,7 +242,7 @@ configure-mpfr-64:
 		CFLAGS="-fno-stack-protector -fPIC" \
 		./configure --prefix=$(shell pwd)/deps/mpfr-64/$(HG_LOCAL_INSTALL_NAME) \
 		            --with-gmp-build=$(shell pwd)/deps/gmp-64 \
-		            --build=amd64 \
+		            --build=$(AUTOCONF_BUILD_64) \
 		            $(MPFR_CONFIGURE_FLAGS) && \
 		aclocal
 

@@ -45,7 +45,12 @@ const char * printfNames[] = {
   "camlPrintf__fprintf",
 };
 
+#if !defined(VGA_amd64)
+static Bool warnedPrintfInterceptUnsupported = False;
+#endif
+
 void maybeInterceptBlock(IRSB* sbOut, void* blockAddr, void* srcAddr){
+#if defined(VGA_amd64)
   const char * fnname;
   Bool isStart =
     VG_(get_fnname_if_entry)(VG_(current_DiEpoch)(), (uintptr_t)blockAddr, &fnname);
@@ -61,14 +66,23 @@ void maybeInterceptBlock(IRSB* sbOut, void* blockAddr, void* srcAddr){
       }
     }
   }
+#else
+  (void)sbOut;
+  (void)blockAddr;
+  (void)srcAddr;
+  if (!warnedPrintfInterceptUnsupported){
+    VG_(dmsg)("Warning! Herbgrind OCaml printf interception is currently only supported on amd64; skipping it on this architecture.\n");
+    warnedPrintfInterceptUnsupported = True;
+  }
+#endif
 }
 
 /* ------------------------------------------
 
-   The thread state location TS(72), as far as I can tell, contains a
+   On amd64, the thread state location TS(72), as far as I can tell, contains a
    pointer to the format string going in to the function.
 
-   If you give printf 8 double arguments, they will be stored in
+   On amd64, if you give printf 8 double arguments, they will be stored in
    TS(224), TS(256), TS(288), TS(320),
    TS(352), TS(384), TS(416), and TS(448).
    Other, non-floating point arguments don't seem to change that placement.

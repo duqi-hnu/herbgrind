@@ -1,6 +1,6 @@
 include ../../Makefile.common
 
-extra_deps_amd64 = \
+extra_deps_64 = \
 	$(top_builddir)/../deps/mpc-64/$(HG_LOCAL_INSTALL_NAME)/lib/libmpc.a \
 	$(top_builddir)/../deps/mpfr-64/$(HG_LOCAL_INSTALL_NAME)/lib/libmpfr.a \
 	$(top_builddir)/../deps/gmp-64/$(HG_LOCAL_INSTALL_NAME)/lib/libgmp.a \
@@ -9,7 +9,7 @@ extra_deps_amd64 = \
 extra_deps_i386 = \
 	$(top_builddir)/../deps/mpc-32/$(HG_LOCAL_INSTALL_NAME)/lib/libmpc.a \
 	$(top_builddir)/../deps/mpfr-32/$(HG_LOCAL_INSTALL_NAME)/lib/libmpfr.a \
-	$(top_builddir)/../deps/gmp-32/$(HG_LOCAL_INSTALL_NAME)/lib/libgmp.a
+	$(top_builddir)/../deps/gmp-32/$(HG_LOCAL_INSTALL_NAME)/lib/libgmp.a \
 	$(top_builddir)/../deps/openlibm-32/libopenlibm.a
 
 include $(top_srcdir)/Makefile.tool.am
@@ -58,10 +58,10 @@ herbgrind_@VGCONF_ARCH_PRI@_@VGCONF_OS@_CFLAGS       = \
 	-I$(top_srcdir)/../deps/mpc-64/$(HG_LOCAL_INSTALL_NAME)/include/
 herbgrind_@VGCONF_ARCH_PRI@_@VGCONF_OS@_DEPENDENCIES = \
 	$(TOOL_DEPENDENCIES_@VGCONF_PLATFORM_PRI_CAPS@) \
-	$(extra_deps_amd64)
+	$(extra_deps_64)
 herbgrind_@VGCONF_ARCH_PRI@_@VGCONF_OS@_LDADD        = \
 	$(TOOL_LDADD_@VGCONF_PLATFORM_PRI_CAPS@) \
-	$(extra_deps_amd64)
+	$(extra_deps_64)
 herbgrind_@VGCONF_ARCH_PRI@_@VGCONF_OS@_LDFLAGS      = \
 	$(TOOL_LDFLAGS_@VGCONF_PLATFORM_PRI_CAPS@)
 herbgrind_@VGCONF_ARCH_PRI@_@VGCONF_OS@_LINK = \

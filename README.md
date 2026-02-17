@@ -49,15 +49,20 @@ https://stackoverflow.com/questions/30003570/how-to-use-gnu-sed-on-mac-os-x/3481
 
 ### Installing
 
-The project was developed on a 64-bit linux platform that supports
-32-bit compilation. If you're running on a platform like this, running
-just "make" or "make compile" after cloning the repo should just work.
-Otherwise, you'll want to open up the toplevel makefile, and modify
-some variables. Set TARGET\_PLAT and ARCH\_PRI appropriately for your
-platform. If you're on a platform for which valgrind wants to build a
-secondary version (certain 64-bit configurations will cause valgrind
-to want to do 32-bit too), then set ARCH\_SEC to that secondary
-architecture.
+The project was developed on 64-bit Linux platforms. By default, the
+toplevel Makefile now auto-detects common host architectures:
+
+- `x86_64`/`amd64` -> `ARCH_PRI=amd64`
+- `aarch64`/`arm64` -> `ARCH_PRI=arm64`
+
+so on those machines, running just `make` or `make compile` after
+cloning the repo should work.
+
+If you need a custom platform setup, open the toplevel Makefile and set
+`TARGET_PLAT` and `ARCH_PRI` explicitly. If you're on a platform for
+which valgrind wants to build a secondary version (certain 64-bit
+configurations will cause valgrind to want to do 32-bit too), then set
+`ARCH_SEC` to that secondary architecture.
 
 If you just want to configure everything, but not compile, run "make
 setup".
