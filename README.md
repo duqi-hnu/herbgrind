@@ -76,4 +76,24 @@ Running
 
 To run, just run "*path-to-herbgrind*/valgrind/herbgrind-install/bin/valgrind --tool=herbgrind *executable-to-run-on*"
 
+Testing
+-------
+
+Run the default benchmark test suite with:
+
+    $ make test
+
+By default, `make test` runs the stable benchmark subset. Two optional
+groups are disabled unless explicitly enabled:
+
+- `RUN_OCAML_BENCH=1` enables OCaml benchmarks (`bench/*.ml.out.expected`)
+- `RUN_UNSTABLE_BENCH=1` enables known unstable benchmarks on modern
+  toolchain/libm combinations (currently `bench/some-trig.c.out.expected`)
+
+Examples:
+
+    $ RUN_OCAML_BENCH=1 make test
+    $ RUN_UNSTABLE_BENCH=1 make test
+    $ RUN_OCAML_BENCH=1 RUN_UNSTABLE_BENCH=1 make test
+
 <img src="docs/logo-drawing.png" alt="Herbgrind logo" width="50%"/>
