@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import re
+import os
 HEX_RE = re.compile(r"\(instr-addr [0-9a-fA-F]+\)")
 LINE_RE = re.compile(r"\(line-num [0-9]+\)")
 
@@ -16,7 +17,9 @@ def test(prog):
     command = ["./valgrind/herbgrind-install/bin/valgrind", "--tool=herbgrind",
                "--output-sexp", prog]
     print("Calling `{}`...".format(" ".join(command)), end=" ")
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    env = dict(os.environ)
+    env.setdefault("GLIBC_TUNABLES", "glibc.pthread.rseq=0")
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
     stdout, stderr = proc.communicate()
     status = proc.poll()
     full_stderr = stderr.decode('utf-8')
