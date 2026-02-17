@@ -879,7 +879,7 @@ const char* opSym(ShadowOpInfo* op){
   if (op->op_code == 0x0){
     return getWrappedName(op->op_type);
   } else {
-    return getOpcodeSymbol(op->op_code);
+    return getOpcodeSymbol((IROp)op->op_code);
   }
 }
 

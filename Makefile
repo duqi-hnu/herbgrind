@@ -33,15 +33,16 @@ DEFAULT_AUTOCONF_BUILD_64 := $(UNAME_M)
 endif
 
 OS_FLAVOR := $(if $(filter Darwin,$(UNAME_S)),darwin,linux)
+GCC_MACHINE := $(shell gcc -dumpmachine 2>/dev/null)
 
 ARCH_PRI ?= $(DEFAULT_ARCH_PRI)
 ARCH_SEC ?=
 TARGET_PLAT ?= $(ARCH_PRI)-$(OS_FLAVOR)
 
 ifeq ($(ARCH_PRI),amd64)
-AUTOCONF_BUILD_64 ?= x86_64
+AUTOCONF_BUILD_64 ?= $(if $(GCC_MACHINE),$(GCC_MACHINE),x86_64-unknown-linux-gnu)
 else ifeq ($(ARCH_PRI),arm64)
-AUTOCONF_BUILD_64 ?= aarch64
+AUTOCONF_BUILD_64 ?= $(if $(GCC_MACHINE),$(GCC_MACHINE),aarch64-unknown-linux-gnu)
 else
 AUTOCONF_BUILD_64 ?= $(DEFAULT_AUTOCONF_BUILD_64)
 endif
@@ -201,7 +202,7 @@ deps/mpc-%/$(HG_LOCAL_INSTALL_NAME)/lib/libmpc.a: setup/mpc-$(MPC_VERSION).tar.g
 	cd setup && ./patch_mpc.sh $*
 	cd deps/mpc-$*/ && autoconf
 	cd deps/mpc-$*/ && \
-		CFLAGS="-fno-stack-protector -DNDEBUG" \
+		CFLAGS="-fno-stack-protector -DNDEBUG -fcommon" \
 		OBJECT_MODE=64 \
 		./configure \
 		--prefix=$(shell pwd)/deps/mpc-64/$(HG_LOCAL_INSTALL_NAME) \
@@ -230,7 +231,7 @@ MPFR_CONFIGURE_FLAGS = --disable-thread-safe
 
 configure-mpfr-32:
 	cd deps/mpfr-32/ && \
-		CFLAGS="-fno-stack-protector -fPIC" \
+		CFLAGS="-fno-stack-protector -fPIC -fcommon" \
 		./configure --prefix=$(shell pwd)/deps/mpfr-32/$(HG_LOCAL_INSTALL_NAME) \
 		            --with-gmp-build=$(shell pwd)/deps/gmp-32 \
 		            --build=i386 \
@@ -239,7 +240,7 @@ configure-mpfr-32:
 
 configure-mpfr-64:
 	cd deps/mpfr-64/ && \
-		CFLAGS="-fno-stack-protector -fPIC" \
+		CFLAGS="-fno-stack-protector -fPIC -fcommon" \
 		./configure --prefix=$(shell pwd)/deps/mpfr-64/$(HG_LOCAL_INSTALL_NAME) \
 		            --with-gmp-build=$(shell pwd)/deps/gmp-64 \
 		            --build=$(AUTOCONF_BUILD_64) \
